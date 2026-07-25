@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/patient_settings.js') }}" defer></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #F7F7FB;
+      --surface: #FFFFFF;
+      --surface-alt: #FAFAFD;
+      --border: #E7E5F1;
+      --text-primary: #1E1B2E;
+      --text-secondary: #6B6880;
+      --accent: #6D5BD0;
+      --accent-soft: #EFECFB;
+      --danger: #E0524A;
+      --shadow: 0 1px 2px rgba(30,27,46,0.04), 0 8px 24px rgba(30,27,46,0.06);
+    }
+
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      color: var(--text-primary);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    body[data-theme="dark"] {
+      color-scheme: dark;
+      --page-bg: #0F1118;
+      --surface: #171B27;
+      --surface-alt: #1F2432;
+      --border: #2F3546;
+      --text-primary: #F7F7FB;
+      --text-secondary: #B6BED5;
+      --accent: #8B7CF5;
+      --accent-soft: #221D46;
+      --danger: #FF8D82;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--accent);
+      opacity: 0.9;
+    }
+
+    .app-shell {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: var(--page-bg);
+      color: var(--text-primary);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      box-sizing: border-box;
+      z-index: 10;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sidebar-link.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .sidebar-link.danger {
+      color: var(--danger);
+    }
+
+    .sidebar-divider {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .content-shell {
+      margin-left: 240px;
+      padding: 40px;
+      box-sizing: border-box;
+      max-width: 640px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-tab {
+      background: none;
+      border: none;
+      padding: 10px 4px;
+      margin-right: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .settings-panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .settings-panel-card.compact {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .settings-panel-card.padded {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .settings-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .settings-card-copy {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .settings-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background: var(--surface-alt);
+      color: var(--text-primary);
+      color-scheme: inherit;
+    }
+
+    .settings-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .settings-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .settings-toggle-row:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .settings-toggle-row input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .settings-button {
+      align-self: flex-start;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="sidebar">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:var(--text-primary)">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">AI</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/patient/dashboard" class="sidebar-link">Dashboard</a>
+      <a href="/intake/chat" class="sidebar-link">AI Intake</a>
+      <a href="/patient/intake-history" class="sidebar-link">Intake History</a>
+      <a href="/patient/clinical-summary" class="sidebar-link">Clinical Summary</a>
+      <a href="/patient/my-documents" class="sidebar-link">Documents</a>
+      <a href="/patient/appointments" class="sidebar-link">Appointments</a>
+      <a href="/patient/my-doctors" class="sidebar-link">My Doctors</a>
+    </nav>
+    <div class="sidebar-divider">
+      <a href="/patient/profile-settings" class="sidebar-link">Profile & Settings</a>
+      <a href="/patient/settings" class="sidebar-link active">Settings</a>
+      <a href="/login" id="logoutLink" class="sidebar-link danger">Log out</a>
+    </div>
+  </div>
+
+  <div class="content-shell">
+    <div class="page-title">Settings</div>
+
+    <div class="tab-row">
+      <button type="button" class="settings-tab" data-tab="account" style="color:var(--accent);border-bottom:2px solid var(--accent)">Account</button>
+      <button type="button" class="settings-tab" data-tab="privacy">Privacy</button>
+      <button type="button" class="settings-tab" data-tab="security">Security</button>
+      <button type="button" class="settings-tab" data-tab="theme">Theme</button>
+    </div>
+
+    <div id="accountPanel" class="settings-panel">
+      <div class="settings-panel-card compact">
+        <div>
+          <div class="settings-card-title">Email notifications</div>
+          <div class="settings-card-copy" style="margin-top:2px">Appointment reminders and intake summaries.</div>
+        </div>
+        <label class="settings-toggle-row"><span>Appointment reminders</span><input id="remindersToggle" type="checkbox" checked /></label>
+        <label class="settings-toggle-row"><span>Clinical summary ready alerts</span><input id="summaryToggle" type="checkbox" checked /></label>
+      </div>
+    </div>
+
+    <div id="privacyPanel" class="settings-panel" style="display:none">
+      <div class="settings-panel-card">
+        <div class="settings-card-title" style="margin-bottom:8px">Data sharing</div>
+        <div class="settings-card-copy" style="line-height:1.6">Your intake data is shared only with your assigned care team. In this demo, no data leaves your browser.</div>
+      </div>
+    </div>
+
+    <div id="securityPanel" class="settings-panel" style="display:none">
+      <div class="settings-panel-card padded">
+        <div>
+          <label class="settings-label">Current password</label>
+          <input id="currentPassword" class="settings-input" type="password" />
+        </div>
+        <div>
+          <label class="settings-label">New password</label>
+          <input id="newPassword" class="settings-input" type="password" />
+        </div>
+        <button id="updatePasswordButton" type="button" class="settings-button">Update password</button>
+        <div id="passwordStatus" style="display:none;font-size:13px;color:var(--text-primary)"></div>
+      </div>
+    </div>
+
+    <div id="themePanel" class="settings-panel" style="display:none">
+      <div class="settings-panel-card">
+        <div class="settings-card-title" style="margin-bottom:8px">Appearance</div>
+        <label class="settings-toggle-row" style="border-top:0;padding-top:0">
+          <span>Dark mode</span>
+          <input id="darkModeToggle" type="checkbox" />
+        </label>
+        <div class="settings-card-copy">Choose a light or dark appearance for this settings experience.</div>
+      </div>
+    </div>
+
+    <div class="footer-note"></div>
+  </div>
+</div>
+</body>
+</html>

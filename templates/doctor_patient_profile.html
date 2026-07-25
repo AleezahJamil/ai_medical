@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #F7F7FB; }
+    a { color: #6D5BD0; text-decoration: none; }
+    a:hover { color: #5A48BD; }
+  </style>
+</head>
+<body>
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:#F7F7FB">
+  <div style="position:fixed;top:0;left:0;width:240px;height:100vh;background:#FFFFFF;border-right:1px solid #E7E5F1;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:#1E1B2E">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">Clinician</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/doctor/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Dashboard</a>
+      <a href="/doctor/patients" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Patients</a>
+      <a href="/doctor/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Appointments</a>
+      <a href="/doctor/audit" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Audit Trail</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E7E5F1;padding-top:12px">
+      <a href="/doctor/profile" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Profile</a>
+      <a href="/doctor/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Settings</a>
+      <a href="/login" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#E0524A">Log out</a>
+    </div>
+  </div>
+
+  <div style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:1040px">
+    <a href="/doctor/patients" style="font-size:13px;font-weight:700;display:inline-block;margin-bottom:16px">← All patients</a>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+      <div style="width:56px;height:56px;border-radius:50%;background:#EFECFB;color:#6D5BD0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">{{ avatar }}</div>
+      <div>
+        <div style="font-size:24px;font-weight:800;color:#1E1B2E">{{ patient.name }}</div>
+        <div style="font-size:14px;color:#6B6880">{{ mrn }} · Age {{ age }}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:4px;border-bottom:1px solid #E7E5F1;margin-bottom:24px">
+      <a href="/doctor/patient/{{ patient.id }}" style="padding:10px 16px;font-size:14px;font-weight:600;color:#6B6880{% if activeTab == 'overview' %};color:#6D5BD0;border-bottom:2px solid #6D5BD0;font-weight:700{% endif %}">Overview</a>
+      <a href="/doctor/patient/{{ patient.id }}?tab=intake-history" style="padding:10px 16px;font-size:14px;font-weight:600;color:#6B6880{% if activeTab == 'intake-history' %};color:#6D5BD0;border-bottom:2px solid #6D5BD0;font-weight:700{% endif %}">Intake History</a>
+      <a href="/doctor/patient/{{ patient.id }}?tab=clinical-summaries" style="padding:10px 16px;font-size:14px;font-weight:600;color:#6B6880{% if activeTab == 'clinical-summaries' %};color:#6D5BD0;border-bottom:2px solid #6D5BD0;font-weight:700{% endif %}">Clinical Summaries</a>
+      <a href="/doctor/patient/{{ patient.id }}?tab=documents" style="padding:10px 16px;font-size:14px;font-weight:600;color:#6B6880{% if activeTab == 'documents' %};color:#6D5BD0;border-bottom:2px solid #6D5BD0;font-weight:700{% endif %}">Documents</a>
+      <a href="/doctor/patient/{{ patient.id }}?tab=clinical-notes" style="padding:10px 16px;font-size:14px;font-weight:600;color:#6B6880{% if activeTab == 'clinical-notes' %};color:#6D5BD0;border-bottom:2px solid #6D5BD0;font-weight:700{% endif %}">Clinical Notes</a>
+    </div>
+
+    {% if activeTab == 'intake-history' %}
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Intake history</div>
+        {% for item in intakeHistory %}
+          <div style="padding:14px 0;border-bottom:1px solid #E7E5F1">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:700;color:#1E1B2E">{{ item.concern }}</span>
+              <span style="font-size:13px;color:#6B6880">{{ item.date }}</span>
+            </div>
+            <div style="font-size:13px;color:#6B6880;margin-top:6px">{{ item.status }}</div>
+          </div>
+        {% endfor %}
+        {% if noIntakeHistory %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No intake history stored yet.</div>
+        {% endif %}
+      </div>
+    {% elif activeTab == 'clinical-summaries' %}
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Clinical summaries</div>
+        <form action="/doctor/summary/{{ patient.id }}/save" method="post" style="margin-bottom:16px">
+          <label style="display:block;font-size:13px;font-weight:700;color:#6B6880;margin-bottom:6px">Current summary</label>
+          <textarea name="summary_text" rows="5" style="width:100%;box-sizing:border-box;border:1px solid #E7E5F1;border-radius:10px;padding:10px;resize:vertical">{{ concern }}</textarea>
+          <input type="hidden" name="editor_name" value="Dr. {{ session['name'] | default('Doctor') }}">
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button type="submit" style="border:none;border-radius:999px;background:#6D5BD0;color:#fff;padding:8px 14px;font-weight:700">Save summary</button>
+          </div>
+        </form>
+        {% if symptoms|length > 0 %}
+          <div style="font-size:13px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">AI-generated details</div>
+          {% for s in symptoms %}
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E7E5F1">
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#1E1B2E">{{ s.label }}</div>
+                <div style="font-size:13px;color:#6B6880">{{ s.detail }}</div>
+              </div>
+              {% if s.flagged %}
+                <span style="font-size:11px;font-weight:700;color:#B5432B;background:#FBEAE7;padding:4px 10px;border-radius:999px;white-space:nowrap">Flagged</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No clinical summaries available yet.</div>
+        {% endif %}
+      </div>
+    {% elif activeTab == 'documents' %}
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Documents on file</div>
+        {% for doc in documents %}
+          <div style="padding:16px 0;border-bottom:1px solid #E7E5F1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:700;color:#1E1B2E">{{ doc.name }}</span>
+              <span style="font-size:13px;color:#6B6880">{{ doc.uploadedAt }}</span>
+            </div>
+            <div style="font-size:13px;color:#6B6880;margin-top:10px;line-height:1.6">{{ doc.summary }}</div>
+          </div>
+        {% endfor %}
+        {% if noDocuments %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No documents uploaded yet.</div>
+        {% endif %}
+      </div>
+    {% elif activeTab == 'clinical-notes' %}
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Clinical notes</div>
+        <form action="/doctor/notes/{{ patient.id }}" method="post" style="margin-bottom:16px">
+          <label style="display:block;font-size:13px;font-weight:700;color:#6B6880;margin-bottom:6px">New note</label>
+          <textarea name="note_text" rows="4" style="width:100%;box-sizing:border-box;border:1px solid #E7E5F1;border-radius:10px;padding:10px;resize:vertical"></textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;gap:8px">
+            <button type="button" onclick="const text=document.querySelector('textarea[name=note_text]').value; if(text){ fetch('/doctor/notes/{{ patient.id }}/improve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note:text})}).then(r=>r.json()).then(data=>{ if(data.improved_note){ document.querySelector('textarea[name=note_text]').value=data.improved_note; } }); }" style="border:1px solid #E7E5F1;background:#fff;color:#1E1B2E;border-radius:999px;padding:8px 14px;font-weight:700">Improve with AI</button>
+            <button type="submit" style="border:none;border-radius:999px;background:#6D5BD0;color:#fff;padding:8px 14px;font-weight:700">Save note</button>
+          </div>
+        </form>
+        {% if clinicalNotes %}
+          {% for note in clinicalNotes %}
+            <div style="padding:14px 0;border-bottom:1px solid #E7E5F1">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+                <div style="font-size:13px;color:#6B6880">Saved note • {{ note.updated_at or note.created_at or 'Unknown time' }}</div>
+              </div>
+              <div style="font-size:14px;font-weight:700;color:#1E1B2E;margin-bottom:6px">{{ note.original_note }}</div>
+              <div style="font-size:13px;color:#6B6880">{{ note.improved_note }}</div>
+              <form action="/doctor/notes/{{ patient.id }}" method="post" style="margin-top:10px">
+                <textarea name="note_text" rows="3" style="width:100%;box-sizing:border-box;border:1px solid #E7E5F1;border-radius:10px;padding:10px;resize:vertical">{{ note.original_note }}</textarea>
+                <input type="hidden" name="note_id" value="{{ note.id }}">
+                <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                  <button type="submit" style="border:none;border-radius:999px;background:#6D5BD0;color:#fff;padding:8px 14px;font-weight:700">Edit note</button>
+                </div>
+              </form>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No clinical notes stored yet.</div>
+        {% endif %}
+      </div>
+    {% else %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+        <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px">
+          <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Reported concern</div>
+          <div style="font-size:15px;font-weight:600;color:#1E1B2E">{{ concern }}</div>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px">
+          <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Visits</div>
+          <div style="font-size:14px;color:#1E1B2E"><strong>Last:</strong> {{ lastVisit }}</div>
+          <div style="font-size:14px;color:#1E1B2E;margin-top:4px"><strong>Next:</strong> {{ nextVisit }}</div>
+        </div>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px;margin-bottom:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px">Latest AI clinical summary</div>
+          <a href="/doctor/patient/{{ patient.id }}?tab=clinical-summaries" style="font-size:13px;font-weight:700">View all →</a>
+        </div>
+        {% for s in symptoms %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E7E5F1">
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#1E1B2E">{{ s.label }}</div>
+              <div style="font-size:13px;color:#6B6880">{{ s.detail }}</div>
+            </div>
+            {% if s.flagged %}
+              <span style="font-size:11px;font-weight:700;color:#B5432B;background:#FBEAE7;padding:4px 10px;border-radius:999px;white-space:nowrap">Flagged</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+        {% if symptoms|length == 0 %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No clinical summary available yet.</div>
+        {% endif %}
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:20px">
+        <div style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Documents on file</div>
+        {% for doc in documents %}
+          <div style="padding:16px 0;border-bottom:1px solid #E7E5F1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:700;color:#1E1B2E">{{ doc.name }}</span>
+              <span style="font-size:13px;color:#6B6880">{{ doc.uploadedAt }}</span>
+            </div>
+            <div style="font-size:13px;color:#6B6880;margin-top:10px;line-height:1.6">{{ doc.summary }}</div>
+          </div>
+        {% endfor %}
+        {% if noDocuments %}
+          <div style="font-size:14px;color:#6B6880;padding:10px 0">No documents uploaded yet.</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid #E7E5F1;font-size:12px;color:#6B6880"></div>
+  </div>
+</div>
+</body>
+</html>

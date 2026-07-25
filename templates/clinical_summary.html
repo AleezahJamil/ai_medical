@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/clinical_summary.js') }}" defer></script>
+  <style>
+    body { margin: 0; background: #F7F7FB; }
+    a { color: #6D5BD0; text-decoration: none; }
+    a:hover { color: #5A48BD; }
+  </style>
+</head>
+<body data-patient-id="{{ patient_id }}" data-first-name="{{ first_name }}">
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:#F7F7FB">
+  <div style="position:fixed;top:0;left:0;width:240px;height:100vh;background:#FFFFFF;border-right:1px solid #E7E5F1;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:#1E1B2E">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">AI</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/patient/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Dashboard</a>
+      <a href="/intake/chat" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">AI Intake</a>
+      <a href="/patient/intake-history" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Intake History</a>
+      <a href="/patient/clinical-summary" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:#EFECFB;color:#6D5BD0">Clinical Summary</a>
+      <a href="/patient/my-documents" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Documents</a>
+      <a href="/patient/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Appointments</a>
+      <a href="/patient/my-doctors" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">My Doctors</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E7E5F1;padding-top:12px">
+      <a href="/patient/profile-settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Profile & Settings</a>
+      <a href="/patient/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Settings</a>
+      <a href="/login" id="logoutLink" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#E0524A">Log out</a>
+    </div>
+  </div>
+
+  <div style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:720px">
+    <div id="mainConcern" style="font-size:26px;font-weight:800;color:#1E1B2E;margin-bottom:4px">Loading clinical summary…</div>
+    <div id="generatedNote" style="font-size:14px;color:#6B6880;margin-bottom:24px">AI-organized summary — reviewed by Dr. Sarah Khan before any clinical decision.</div>
+
+    <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 1px 2px rgba(30,27,46,0.04),0 8px 24px rgba(30,27,46,0.06)">
+      <div style="font-size:16px;font-weight:700;color:#1E1B2E;margin-bottom:16px">Reported symptoms</div>
+      <div style="display:flex;flex-direction:column;gap:12px" id="symptomsList">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #E7E5F1">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#1E1B2E">No symptom details yet</div>
+            <div style="font-size:13px;color:#6B6880;margin-top:2px">Complete intake to populate symptom details.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:24px;box-shadow:0 1px 2px rgba(30,27,46,0.04),0 8px 24px rgba(30,27,46,0.06)">
+      <div style="font-size:16px;font-weight:700;color:#1E1B2E;margin-bottom:4px">AI-suggested plan</div>
+      <div style="font-size:12px;color:#6B6880;margin-bottom:16px">Suggestions only — not a diagnosis. Final plan is set by your doctor.</div>
+      <div id="planList"></div>
+    </div>
+
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid #E7E5F1;font-size:12px;color:#6B6880"></div>
+  </div>
+</div>
+</body>
+</html>

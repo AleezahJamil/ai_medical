@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/patient_profile_settings.js') }}" defer></script>
+  <style>
+    body { margin: 0; background: #F7F7FB; }
+    a { color: #6D5BD0; text-decoration: none; }
+    a:hover { color: #5A48BD; }
+  </style>
+</head>
+<body data-patient-id="{{ patient_id }}" data-first-name="{{ first_name }}">
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:#F7F7FB">
+  <div style="position:fixed;top:0;left:0;width:240px;height:100vh;background:#FFFFFF;border-right:1px solid #E7E5F1;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:#1E1B2E">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">AI</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/patient/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Dashboard</a>
+      <a href="/intake/chat" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">AI Intake</a>
+      <a href="/patient/intake-history" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Intake History</a>
+      <a href="/patient/clinical-summary" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Clinical Summary</a>
+      <a href="/patient/my-documents" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Documents</a>
+      <a href="/patient/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Appointments</a>
+      <a href="/patient/my-doctors" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">My Doctors</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E7E5F1;padding-top:12px">
+      <a href="/patient/profile-settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:#EFECFB;color:#6D5BD0">Profile & Settings</a>
+      <a href="/patient/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Settings</a>
+      <a href="/login" id="logoutLink" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#E0524A">Log out</a>
+    </div>
+  </div>
+
+  <div style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:600px">
+    <div style="font-size:26px;font-weight:800;color:#1E1B2E;margin-bottom:24px">Profile</div>
+
+    <form id="profileForm" style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;padding:24px;box-shadow:0 1px 2px rgba(30,27,46,0.04),0 8px 24px rgba(30,27,46,0.06)">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #E7E5F1">
+        <div style="width:56px;height:56px;border-radius:50%;background:#EFECFB;color:#6D5BD0;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center">{{ name[0] if name else '' }}</div>
+        <div>
+          <div style="font-size:18px;font-weight:800;color:#1E1B2E">{{ name }}</div>
+          <div style="font-size:13px;color:#6B6880">Patient ID {{ patient_id }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Full name</label>
+          <input id="nameInput" value="{{ name }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#FFFFFF;color-scheme:light" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Date of birth</label>
+            <input id="dobInput" value="{{ dob }}" readonly style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#F7F7FB;color-scheme:light" />
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Age</label>
+            <input id="ageInput" value="{{ age }}" readonly style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#F7F7FB;color-scheme:light" />
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Email</label>
+          <input id="emailInput" value="{{ email }}" type="email" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#FFFFFF;color-scheme:light" />
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#6B6880;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Phone</label>
+          <input id="phoneInput" value="{{ phone }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#FFFFFF;color-scheme:light" />
+        </div>
+      </div>
+
+      <div id="statusMessage" style="display:none;margin-top:24px;padding:14px 16px;border-radius:12px;font-size:14px"></div>
+      <button id="saveButton" type="submit" style="margin-top:24px;background:#6D5BD0;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;cursor:pointer">Save changes</button>
+    </form>
+
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid #E7E5F1;font-size:12px;color:#6B6880"></div>
+  </div>
+</div>
+</body>
+</html>

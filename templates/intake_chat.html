@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/intake_chat.js') }}" defer></script>
+  <style>
+    body { margin: 0; background: #F7F7FB; }
+    a { color: #6D5BD0; text-decoration: none; }
+    a:hover { color: #5A48BD; }
+  </style>
+</head>
+<body data-patient-id="{{ patient_id }}" data-first-name="{{ first_name }}">
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:#F7F7FB">
+  <div style="position:fixed;top:0;left:0;width:240px;height:100vh;background:#FFFFFF;border-right:1px solid #E7E5F1;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:#1E1B2E">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">AI</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/patient/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Dashboard</a>
+      <a href="/intake/chat" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:#EFECFB;color:#6D5BD0">AI Intake</a>
+      <a href="/patient/intake-history" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Intake History</a>
+      <a href="/patient/clinical-summary" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Clinical Summary</a>
+      <a href="/patient/my-documents" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Documents</a>
+      <a href="/patient/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Appointments</a>
+      <a href="/patient/my-doctors" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">My Doctors</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E7E5F1;padding-top:12px">
+      <a href="/patient/profile-settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Profile & Settings</a>
+      <a href="/patient/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Settings</a>
+      <a href="/login" id="logoutLink" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#E0524A">Log out</a>
+    </div>
+  </div>
+
+  <div style="margin-left:240px;padding:40px;box-sizing:border-box;width:calc(100% - 240px);max-width:none;display:flex;flex-direction:column;height:100vh;min-width:0">
+    <div style="font-size:26px;font-weight:800;color:#1E1B2E;margin-bottom:4px">AI Health Intake</div>
+    <div style="font-size:14px;color:#6B6880;margin-bottom:16px">Answer a few questions so Dr. Khan can prepare before your visit.</div>
+
+    <div id="safetyBanner" style="border:1px solid #E0524A;background:#FDECEA;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span style="font-size:13px;color:#1E1B2E">If you are experiencing a medical emergency, call 911 or go to your nearest emergency room.</span>
+      <button id="dismissSafety" type="button" style="background:none;border:none;color:#E0524A;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;font-size:16px">×</button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:20px" id="stepDots"></div>
+    <div id="stepLabel" style="font-size:12px;font-weight:600;color:#6B6880;margin-bottom:16px;margin-top:-12px"></div>
+
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:16px" id="messageContainer"></div>
+
+    <div id="completeCta" style="display:none;align-self:flex-start;background:#E8F7EF;color:#2FA36B;font-size:13px;font-weight:700;padding:10px 16px;border-radius:8px">
+      <a href="/patient/clinical-summary" style="color:#2FA36B;text-decoration:none">View Clinical Summary →</a>
+    </div>
+
+    <div style="display:flex;gap:10px;padding-top:12px;border-top:1px solid #E7E5F1">
+      <input id="userInput" type="text" placeholder="Type your response…" style="flex:1;box-sizing:border-box;padding:12px 14px;border:1px solid #E7E5F1;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:#1E1B2E;background:#FFFFFF;" />
+      <button id="sendButton" type="button" style="background:#6D5BD0;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;padding:0 20px;border-radius:8px;cursor:pointer">Send</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

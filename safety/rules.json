@@ -1,0 +1,23 @@
+[
+  {
+    "rule_id": "cardiac_respiratory_01",
+    "category": "cardiac_respiratory",
+    "level": "EMERGENCY",
+    "match_type": "combination",
+    "pattern_groups": {
+      "chest_pain_terms": ["chest pain", "chest hurts", "chest pressure", "chest tightness"],
+      "breathing_difficulty_terms": ["can't breathe", "trouble breathing", "shortness of breath", "gasping"]
+    },
+    "min_groups_matched": 2
+  },
+  {
+    "rule_id": "self_harm_intent_01",
+    "category": "self_harm",
+    "level": "URGENT_REVIEW",
+    "match_type": "single_group",
+    "pattern_groups": {
+      "active_intent_terms": ["want to end my life", "don't want to be here anymore", "planning to hurt myself"]
+    },
+    "min_groups_matched": 1
+  }
+]

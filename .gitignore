@@ -1,0 +1,70 @@
+# ================================
+# Environment and secrets
+# ================================
+.env
+*.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ================================
+# Python bytecode and caches
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ================================
+# Local virtual environments
+# ================================
+.venv/
+venv/
+env/
+ENV/
+
+# ================================
+# Local databases containing user data
+# ================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ================================
+# Runtime-generated user data
+# ================================
+uploaded_documents/
+storage/
+uploads/
+instance/
+
+# ================================
+# Logs and runtime files
+# ================================
+*.log
+logs/
+
+# ================================
+# Local test artifacts
+# ================================
+.test_results/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ================================
+# IDE and editor files
+# ================================
+.vscode/
+.idea/
+
+# ================================
+# Operating system files
+# ================================
+.DS_Store
+Thumbs.db
+desktop.ini
