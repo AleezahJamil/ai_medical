@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>(function(){try{if(localStorage.getItem('careflow-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <script src="{{ url_for('static', filename='js/responsive_nav.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
+  <style>
+    body { margin: 0; }
+    a { text-decoration: none; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 14px 12px; text-align: left; }
+    th { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-secondary); }
+    td { font-size: 14px; color: var(--text-primary); border-top: 1px solid var(--border); vertical-align: top; }
+    tr:first-child td { border-top: none; }
+    .status-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+    .status-pending { color: var(--accent); background: var(--accent-soft); }
+    .status-approved { color: var(--success); background: var(--success-soft); }
+    .status-rejected, .status-suspended { color: var(--danger); background: var(--danger-soft); }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+    .row-actions form { margin: 0; }
+    .row-actions button {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .row-actions button.approve { background: var(--success-soft); color: var(--success); border-color: transparent; }
+    .row-actions button.reject, .row-actions button.suspend { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+    .filter-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .filter-link.active { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  </style>
+</head>
+<body>
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:var(--page-bg)">
+  <button type="button" class="cf-hamburger" aria-label="Open menu"><span></span></button>
+  <div class="cf-sidebar-backdrop"></div>
+  <div class="cf-sidebar" style="position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-weight:800;font-size:16px;color:var(--text-primary)">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase">Admin</span>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
+      <a href="/admin/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:var(--accent-soft);color:var(--accent)">Doctor applications</a>
+    </nav>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);padding-top:12px">
+      <a href="/login" id="adminLogout" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--danger)">Log out</a>
+    </div>
+  </div>
+
+  <div class="cf-content" style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:1040px">
+    <div style="font-size:26px;font-weight:800;color:var(--text-primary);margin-bottom:4px">Doctor applications</div>
+    <div style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">
+      {% if pending_count > 0 %}
+        {{ pending_count }} application{{ 's' if pending_count != 1 else '' }} awaiting review.
+      {% else %}
+        No applications currently awaiting review.
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom:16px">
+      <a href="/admin/dashboard" class="filter-link{% if status_filter == 'all' %} active{% endif %}">All</a>
+      <a href="/admin/dashboard?status=pending" class="filter-link{% if status_filter == 'pending' %} active{% endif %}">Pending</a>
+      <a href="/admin/dashboard?status=approved" class="filter-link{% if status_filter == 'approved' %} active{% endif %}">Approved</a>
+      <a href="/admin/dashboard?status=rejected" class="filter-link{% if status_filter == 'rejected' %} active{% endif %}">Rejected</a>
+      <a href="/admin/dashboard?status=suspended" class="filter-link{% if status_filter == 'suspended' %} active{% endif %}">Suspended</a>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+      <div class="cf-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Professional info</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doctor in doctors %}
+            <tr>
+              <td>
+                <div style="font-weight:700">{{ doctor.name }}</div>
+                <div style="color:var(--text-secondary);font-size:13px">{{ doctor.email }}</div>
+              </td>
+              <td style="color:var(--text-secondary)">
+                {% if doctor.doctor_specialty or doctor.doctor_hospital or doctor.doctor_license_number %}
+                  {% if doctor.doctor_specialty %}<div>{{ doctor.doctor_specialty }}</div>{% endif %}
+                  {% if doctor.doctor_hospital %}<div>{{ doctor.doctor_hospital }}</div>{% endif %}
+                  {% if doctor.doctor_license_number %}<div>License: {{ doctor.doctor_license_number }}</div>{% endif %}
+                {% else %}
+                  <span>Not provided yet</span>
+                {% endif %}
+              </td>
+              <td><span class="status-pill status-{{ doctor.doctor_status }}">{{ doctor.doctor_status }}</span></td>
+              <td>
+                <div class="row-actions">
+                  <form action="/admin/doctor/{{ doctor.email }}/approve" method="post">
+                    <button type="submit" class="approve">Approve</button>
+                  </form>
+                  <form action="/admin/doctor/{{ doctor.email }}/reject" method="post">
+                    <button type="submit" class="reject">Reject</button>
+                  </form>
+                  <form action="/admin/doctor/{{ doctor.email }}/suspend" method="post">
+                    <button type="submit" class="suspend">Suspend</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          {% if doctors|length == 0 %}
+            <tr>
+              <td colspan="4" style="padding:24px;text-align:center;color:var(--text-secondary)">No doctor accounts match this filter.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary)"></div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var adminLogout = document.getElementById('adminLogout');
+    if (adminLogout) {
+      adminLogout.addEventListener('click', async function (event) {
+        event.preventDefault();
+        try {
+          await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        } catch (err) {
+          // ignore logout errors and still redirect to login
+        }
+        window.location.href = '/login';
+      });
+    }
+  });
+</script>
+</body>
+</html>

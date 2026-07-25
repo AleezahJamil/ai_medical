@@ -6,3 +6,4 @@ python-dotenv==1.2.2
 pypdf==6.14.2
 google-auth
 pytest
+requests

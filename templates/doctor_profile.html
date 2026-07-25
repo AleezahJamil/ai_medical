@@ -47,12 +47,18 @@
       <div style="margin-bottom:16px;padding:12px 14px;border-radius:10px;background:var(--danger-soft);color:var(--danger);font-size:14px">{{ error }}</div>
     {% endif %}
 
+    {% if doctor_status != 'approved' %}
+      <div style="margin-bottom:16px;padding:12px 14px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:14px">
+        Account status: <strong>{{ doctor_status }}</strong>{% if doctor_status == 'pending' %} — an administrator will review your professional information below before granting clinical access.{% endif %}
+      </div>
+    {% endif %}
+
     <form method="post" style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:var(--shadow)">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)">
         <div style="width:56px;height:56px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center">{{ name[0] if name else 'D' }}</div>
         <div>
           <div style="font-size:18px;font-weight:800;color:var(--text-primary)">{{ name }}</div>
-          <div style="font-size:13px;color:var(--text-secondary)">{{ specialty }} · {{ doctor_id }}</div>
+          <div style="font-size:13px;color:var(--text-secondary)">{% if specialty %}{{ specialty }} · {% endif %}{{ doctor_id }}</div>
         </div>
       </div>
 
@@ -63,7 +69,7 @@
         </div>
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Specialty</label>
-          <input value="{{ specialty }}" readonly style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--page-bg)" />
+          <input name="specialty" value="{{ specialty }}" placeholder="e.g. Cardiology" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--surface)" />
         </div>
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Email</label>
@@ -72,6 +78,14 @@
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Phone</label>
           <input name="phone" value="{{ phone }}" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--surface)" />
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Hospital / Clinic</label>
+          <input name="hospital" value="{{ hospital }}" placeholder="e.g. St. Mary's Hospital" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--surface)" />
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Medical license number</label>
+          <input name="license_number" value="{{ license_number }}" placeholder="Registration / license #" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--surface)" />
         </div>
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Date of birth</label>

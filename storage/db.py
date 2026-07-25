@@ -30,6 +30,29 @@ def init_db():
         cursor.execute("ALTER TABLE users ADD COLUMN dob TEXT DEFAULT ''")
     if "phone" not in existing_columns:
         cursor.execute("ALTER TABLE users ADD COLUMN phone TEXT DEFAULT ''")
+    # Email verification. DEFAULT 1 means every account that existed before this
+    # migration is grandfathered in as verified (SQLite applies the column default
+    # to pre-existing rows at ALTER time) — only new signups get is_verified=0.
+    if "is_verified" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN is_verified INTEGER NOT NULL DEFAULT 1")
+    if "verification_token_hash" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN verification_token_hash TEXT")
+    if "verification_token_expires_at" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN verification_token_expires_at TEXT")
+    if "verification_sent_at" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN verification_sent_at TEXT")
+    # Doctor approval workflow. DEFAULT 'approved' means every account that
+    # existed before this migration (both roles) is grandfathered in with
+    # clinical access unaffected — only new doctor signups explicitly insert
+    # doctor_status='pending'. Patients ignore this column entirely.
+    if "doctor_status" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN doctor_status TEXT NOT NULL DEFAULT 'approved'")
+    if "doctor_specialty" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN doctor_specialty TEXT DEFAULT ''")
+    if "doctor_hospital" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN doctor_hospital TEXT DEFAULT ''")
+    if "doctor_license_number" not in existing_columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN doctor_license_number TEXT DEFAULT ''")
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS summaries (

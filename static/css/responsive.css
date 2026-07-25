@@ -10,8 +10,8 @@ html, body {
 .cf-hamburger {
   display: none;
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: calc(16px + env(safe-area-inset-top));
+  left: calc(16px + env(safe-area-inset-left));
   z-index: 45;
   width: 44px;
   height: 44px;
@@ -40,6 +40,18 @@ html, body {
 
 .cf-hamburger span::before { top: -6px; position: absolute; }
 .cf-hamburger span::after { top: 6px; position: absolute; }
+
+/* iOS Safari's 100vh is sized to the largest possible viewport (toolbars
+   collapsed); since this is a fixed-position drawer, that leaves its bottom
+   edge below the actually-visible area when the toolbar is showing. 100dvh
+   tracks the real visible viewport. overflow-y:auto is a safety net so any
+   content that still doesn't fit (longer nav + safe-area padding) scrolls
+   instead of clipping. Unconditional (not just mobile) since dvh is a no-op
+   improvement on desktop too. */
+.cf-sidebar {
+  height: 100dvh !important;
+  overflow-y: auto;
+}
 
 .cf-sidebar-backdrop {
   display: none;
@@ -111,11 +123,27 @@ html, body {
     box-shadow: 8px 0 24px rgba(30,27,46,0.18) !important;
   }
 
+  /* Longhand overrides (not the inline "padding" shorthand) so left/right
+     stay as authored while top/bottom get safe-area clearance — the
+     "Profile & Settings" / "Log out" links at the bottom of the drawer
+     were getting clipped behind the home-indicator area without this. */
+  .cf-sidebar {
+    padding-top: calc(24px + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .cf-sidebar a {
+    min-height: 44px;
+  }
+
+  /* Top padding bumped to clear the fixed hamburger button (occupies
+     roughly y:16-60px); bottom gets safe-area clearance for the
+     home-indicator area. */
   .cf-content {
     margin-left: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    padding: 24px 16px 32px !important;
+    padding: 72px 16px calc(32px + env(safe-area-inset-bottom)) !important;
   }
 
   .cf-grid-2,
@@ -133,6 +161,10 @@ html, body {
     flex-wrap: nowrap !important;
   }
 
+  .cf-tabs-scroll > a {
+    min-height: 44px;
+  }
+
   .cf-table-wrap table {
     min-width: 560px;
   }
@@ -148,7 +180,7 @@ html, body {
 
 @media (max-width: 480px) {
   .cf-content {
-    padding: 20px 12px 28px !important;
+    padding: 72px 12px calc(28px + env(safe-area-inset-bottom)) !important;
   }
 
   .cf-calendar-wrap > div {

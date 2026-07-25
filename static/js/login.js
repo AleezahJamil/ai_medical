@@ -16,6 +16,9 @@ const passwordInput = document.getElementById('passwordInput');
 const nameInput = document.getElementById('nameInput');
 const nameField = document.getElementById('nameField');
 const authForm = document.getElementById('authForm');
+const resendField = document.getElementById('resendField');
+const resendEmailInput = document.getElementById('resendEmailInput');
+const resendButton = document.getElementById('resendButton');
 
 const updateUi = () => {
   const isLogin = state.mode === 'login';
@@ -37,12 +40,24 @@ const updateUi = () => {
   nameField.style.display = isLogin ? 'none' : 'block';
 };
 
-const setError = (text) => {
+const setMessage = (text, isError = true) => {
   messageContainer.textContent = text;
+  messageContainer.style.color = isError ? '#E0524A' : '#2E7D5B';
 };
 
 const clearError = () => {
   messageContainer.textContent = '';
+};
+
+const showResend = (prefillEmail) => {
+  resendField.style.display = 'block';
+  if (prefillEmail) {
+    resendEmailInput.value = prefillEmail;
+  }
+};
+
+const hideResend = () => {
+  resendField.style.display = 'none';
 };
 
 loginTab.addEventListener('click', () => {
@@ -64,28 +79,32 @@ doctorTab.addEventListener('click', () => {
 switchLink.addEventListener('click', (event) => {
   event.preventDefault();
   state.mode = state.mode === 'login' ? 'register' : 'login';
+  clearError();
+  hideResend();
   updateUi();
 });
 
 authForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearError();
+  hideResend();
 
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
   if (!email || !password) {
-    setError('Email and password are required.');
+    setMessage('Email and password are required.');
     return;
   }
 
   const payload = { email, password };
   let url = '/auth/login';
+  const isSignup = state.mode === 'register';
 
-  if (state.mode === 'register') {
+  if (isSignup) {
     const name = (nameInput?.value || '').trim();
     if (!name) {
-      setError('Full name is required to create an account.');
+      setMessage('Full name is required to create an account.');
       return;
     }
     payload.name = name;
@@ -102,8 +121,20 @@ authForm.addEventListener('submit', async (event) => {
     });
 
     const result = await response.json();
+
     if (!response.ok) {
-      setError(result.error || 'An error occurred.');
+      setMessage(result.error || 'An error occurred.');
+      if (result.error_code === 'unverified') {
+        showResend(email);
+      }
+      return;
+    }
+
+    if (isSignup) {
+      // Signup no longer logs the user in — they must verify their email first.
+      setMessage(`Account created. Please check ${result.email || email} to verify your account before logging in.`, false);
+      state.mode = 'login';
+      updateUi();
       return;
     }
 
@@ -112,11 +143,60 @@ authForm.addEventListener('submit', async (event) => {
       window.location.href = '/patient/dashboard';
       return;
     }
+    if (role === 'admin') {
+      window.location.href = '/admin/dashboard';
+      return;
+    }
 
     window.location.href = '/doctor/dashboard';
   } catch (error) {
-    setError('Network error. Please try again.');
+    setMessage('Network error. Please try again.');
   }
 });
 
+resendButton.addEventListener('click', async () => {
+  const email = (resendEmailInput.value || '').trim();
+  if (!email) {
+    setMessage('Enter your email to resend the verification link.');
+    return;
+  }
+
+  resendButton.disabled = true;
+  const originalLabel = resendButton.textContent;
+  resendButton.textContent = 'Sending…';
+
+  try {
+    const response = await fetch('/auth/resend-verification', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const result = await response.json();
+    setMessage(result.status || 'If that email exists, a new verification link has been sent.', false);
+  } catch (error) {
+    setMessage('Network error. Please try again.');
+  } finally {
+    resendButton.disabled = false;
+    resendButton.textContent = originalLabel;
+  }
+});
+
+const applyVerificationQueryParams = () => {
+  const params = new URLSearchParams(window.location.search);
+  const verified = params.get('verified');
+  const verifyError = params.get('verify_error');
+
+  if (verified === '1') {
+    setMessage('Email verified. You can now log in.', false);
+  } else if (verifyError === 'expired') {
+    setMessage('That verification link has expired. Enter your email below to get a new one.');
+    showResend();
+  } else if (verifyError === 'invalid') {
+    setMessage('That verification link is invalid. Enter your email below to get a new one.');
+    showResend();
+  }
+};
+
+applyVerificationQueryParams();
 updateUi();

@@ -1,3 +1,4 @@
+import os
 import unittest
 from app import app
 from storage.db import get_connection
@@ -7,8 +8,17 @@ class NameDisplayTests(unittest.TestCase):
     def setUp(self):
         app.config.update(TESTING=True)
         self.client = app.test_client()
+        # Signup now requires sending a real verification email; use the
+        # explicit dev-mode fallback so this test doesn't need real email
+        # provider credentials to exercise /auth/signup.
+        self._prev_mail_dev_mode = os.environ.get("MAIL_DEV_MODE")
+        os.environ["MAIL_DEV_MODE"] = "true"
 
     def tearDown(self):
+        if self._prev_mail_dev_mode is None:
+            os.environ.pop("MAIL_DEV_MODE", None)
+        else:
+            os.environ["MAIL_DEV_MODE"] = self._prev_mail_dev_mode
         self.cleanup_user("patient-name-test@example.com")
         self.cleanup_user("doctor-name-test@example.com")
 

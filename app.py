@@ -9,10 +9,13 @@ from auth.auth_routes import (
     users as auth_users,
     get_user_from_db,
     update_user_profile,
+    update_doctor_professional_info,
+    update_doctor_status,
+    get_doctors_by_status,
     check_password_hash,
     generate_password_hash,
 )
-from auth.decorators import require_role
+from auth.decorators import require_role, require_approved_doctor
 from documents.document_analysis import process_uploaded_document, save_document_to_db, get_documents_from_db
 from booking.scheduling import (
     register_doctor, add_available_slot, get_available_slots,
@@ -45,6 +48,8 @@ def login_page():
             return redirect(url_for("doctor_dashboard_page"))
         if session["role"] == "patient":
             return redirect(url_for("patient_dashboard_page"))
+        if session["role"] == "admin":
+            return redirect(url_for("admin_dashboard_page"))
     return render_template("login.html")
 
 
@@ -169,6 +174,17 @@ def patient_appointments_page():
 def doctor_dashboard_page():
     doctor_id = session.get("email")
     doctor_name = session.get("name")
+
+    doctor_user = get_user_from_db(doctor_id) or {}
+    doctor_status = doctor_user.get("doctor_status", "approved")
+    if doctor_status != "approved":
+        return render_template(
+            "doctor_pending.html",
+            doctor_id=doctor_id,
+            doctor_name=doctor_name,
+            doctor_status=doctor_status,
+        )
+
     register_doctor(doctor_id, doctor_name)
 
     patient_ids = get_doctor_patient_list(doctor_id)
@@ -223,7 +239,11 @@ def doctor_profile_page():
         "email": user.get("email") or doctor_id or "",
         "phone": user.get("phone") or "",
         "dob": user.get("dob") or "",
+        "specialty": user.get("doctor_specialty") or "",
+        "hospital": user.get("doctor_hospital") or "",
+        "license_number": user.get("doctor_license_number") or "",
     }
+    doctor_status = user.get("doctor_status", "approved")
     age = compute_age(profile["dob"])
     error = None
 
@@ -232,6 +252,9 @@ def doctor_profile_page():
         email = (request.form.get("email") or "").strip()
         phone = (request.form.get("phone") or "").strip()
         dob = (request.form.get("dob") or "").strip()
+        specialty = (request.form.get("specialty") or "").strip()
+        hospital = (request.form.get("hospital") or "").strip()
+        license_number = (request.form.get("license_number") or "").strip()
 
         if not name or not email:
             error = "Name and email are required"
@@ -246,24 +269,20 @@ def doctor_profile_page():
             if isinstance(result, tuple) and result[0].get("error"):
                 error = result[0]["error"]
             else:
-                session["email"] = result["email"]
+                doctor_id = result["email"]
+                update_doctor_professional_info(doctor_id, specialty, hospital, license_number)
+                session["email"] = doctor_id
                 session["name"] = result["name"]
-                doctor_id = session["email"]
-                user = get_user_from_db(doctor_id) or {}
-                profile = {
-                    "name": user.get("name") or session.get("name") or "",
-                    "email": user.get("email") or doctor_id or "",
-                    "phone": user.get("phone") or "",
-                    "dob": user.get("dob") or "",
-                }
-                age = compute_age(profile["dob"])
                 return redirect(url_for("doctor_profile_page"))
 
     return render_template(
         "doctor_profile.html",
         doctor_id=doctor_id,
         doctor_name=profile["name"],
-        specialty="Primary care",
+        specialty=profile["specialty"],
+        hospital=profile["hospital"],
+        license_number=profile["license_number"],
+        doctor_status=doctor_status,
         name=profile["name"],
         email=profile["email"],
         phone=profile["phone"],
@@ -313,7 +332,7 @@ def doctor_settings_page():
         "doctor_settings.html",
         doctor_id=doctor_id,
         doctor_name=profile["name"],
-        specialty="Primary care",
+        specialty=user.get("doctor_specialty") or "",
         name=profile["name"],
         email=profile["email"],
         phone=profile["phone"],
@@ -321,6 +340,50 @@ def doctor_settings_page():
         error=error,
         success=success,
     )
+
+
+@app.route("/admin/dashboard", methods=["GET"])
+@require_role("admin")
+def admin_dashboard_page():
+    all_doctors = get_doctors_by_status(None)
+
+    status_filter = request.args.get("status")
+    if status_filter in ("pending", "approved", "rejected", "suspended"):
+        doctors = [d for d in all_doctors if d["doctor_status"] == status_filter]
+    else:
+        status_filter = "all"
+        doctors = all_doctors
+
+    pending_count = sum(1 for d in all_doctors if d["doctor_status"] == "pending")
+
+    return render_template(
+        "admin_dashboard.html",
+        admin_name=session.get("name"),
+        doctors=doctors,
+        status_filter=status_filter,
+        pending_count=pending_count,
+    )
+
+
+@app.route("/admin/doctor/<doctor_id>/approve", methods=["POST"])
+@require_role("admin")
+def admin_approve_doctor(doctor_id):
+    update_doctor_status(doctor_id, "approved")
+    return redirect(url_for("admin_dashboard_page"))
+
+
+@app.route("/admin/doctor/<doctor_id>/reject", methods=["POST"])
+@require_role("admin")
+def admin_reject_doctor(doctor_id):
+    update_doctor_status(doctor_id, "rejected")
+    return redirect(url_for("admin_dashboard_page"))
+
+
+@app.route("/admin/doctor/<doctor_id>/suspend", methods=["POST"])
+@require_role("admin")
+def admin_suspend_doctor(doctor_id):
+    update_doctor_status(doctor_id, "suspended")
+    return redirect(url_for("admin_dashboard_page"))
 
 
 @app.route("/patient/documents", methods=["GET"])
@@ -505,7 +568,7 @@ def send_message():
 # ---------- DOCTOR SUMMARY VIEW ----------
 
 @app.route("/doctor/summary/<patient_id>", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def get_summary(patient_id):
     doctor_id = session.get("email")
     if not doctor_has_access(patient_id, doctor_id):
@@ -517,7 +580,7 @@ def get_summary(patient_id):
 
 
 @app.route("/doctor/summary/<patient_id>/edit", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def edit_summary(patient_id):
     data = request.json or {}
     field_path = data.get("field_path")
@@ -534,7 +597,7 @@ def edit_summary(patient_id):
 
 
 @app.route("/doctor/summary/<patient_id>/save", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def save_summary_text(patient_id):
     doctor_id = session.get("email")
     if not doctor_has_access(patient_id, doctor_id):
@@ -584,7 +647,7 @@ def upload_document(patient_id):
 
 
 @app.route("/doctor/documents/<patient_id>", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def get_patient_documents(patient_id):
     doctor_id = session.get("email")
     if not doctor_has_access(patient_id, doctor_id):
@@ -595,7 +658,7 @@ def get_patient_documents(patient_id):
 # ---------- APPOINTMENT BOOKING ----------
 
 @app.route("/doctor/register", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_register():
     data = request.json
     doctor_id = data.get("doctor_id")
@@ -606,7 +669,7 @@ def doctor_register():
 
 
 @app.route("/doctor/<doctor_id>/slots", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def add_slot(doctor_id):
     data = request.json
     slot = data.get("slot")
@@ -641,7 +704,7 @@ def patient_appointments(patient_id):
 
 
 @app.route("/doctor/appointments", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_appointments_page():
     doctor_id = session.get("email")
     doctor_name = session.get("name")
@@ -711,7 +774,7 @@ def doctor_appointments_page():
 
 
 @app.route("/doctor/patients", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_patients_page():
     doctor_id = session.get("email")
     doctor_name = session.get("name")
@@ -756,7 +819,7 @@ def doctor_patients_page():
 
 
 @app.route("/doctor/audit", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_audit_page():
     doctor_id = session.get("email")
     doctor_name = session.get("name")
@@ -791,7 +854,7 @@ def doctor_audit_page():
 
 
 @app.route("/doctor/patient/<patient_id>", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_patient_profile_page(patient_id):
     doctor_id = session.get("email")
     if not doctor_has_access(patient_id, doctor_id):
@@ -886,13 +949,13 @@ def doctor_patient_profile_page(patient_id):
 
 
 @app.route("/doctor/<doctor_id>/appointments", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_appointments(doctor_id):
     return jsonify(get_doctor_appointments(doctor_id))
 
 
 @app.route("/appointment/<appointment_id>/complete", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def complete_appointment(appointment_id):
     return jsonify(mark_appointment_completed(appointment_id))
 
@@ -905,7 +968,7 @@ def cancel(appointment_id):
 # ---------- DOCTOR-PATIENT ACCESS CONTROL ----------
 
 @app.route("/patient/<patient_id>/assign", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def assign_patient(patient_id):
     data = request.json
     doctor_id = data.get("doctor_id")
@@ -915,13 +978,13 @@ def assign_patient(patient_id):
 
 
 @app.route("/doctor/<doctor_id>/patients", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_patient_list(doctor_id):
     return jsonify(get_doctor_patient_list(doctor_id))
 
 
 @app.route("/patient/<patient_id>/history", methods=["GET"])
-@require_role("doctor")
+@require_approved_doctor
 def patient_assignment_history(patient_id):
     return jsonify(get_patient_history(patient_id))
 
@@ -929,7 +992,7 @@ def patient_assignment_history(patient_id):
 # ---------- CLINICAL NOTES ----------
 
 @app.route("/doctor/notes/<patient_id>/improve", methods=["POST"])
-@require_role("doctor")
+@require_approved_doctor
 def improve_clinical_note(patient_id):
     data = request.json or {}
     rough_note = data.get("note")
@@ -946,7 +1009,7 @@ def improve_clinical_note(patient_id):
 
 
 @app.route("/doctor/notes/<patient_id>", methods=["GET", "POST"])
-@require_role("doctor")
+@require_approved_doctor
 def doctor_notes(patient_id):
     doctor_id = session.get("email")
     if not doctor_has_access(patient_id, doctor_id):
