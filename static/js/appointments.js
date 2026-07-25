@@ -36,8 +36,8 @@ function getDoctorName(doctorId) {
 function showStatus(message, isError = false) {
   statusMessage.textContent = message;
   statusMessage.style.display = 'block';
-  statusMessage.style.background = isError ? '#FDECEA' : '#F5F5FF';
-  statusMessage.style.color = isError ? '#A93C3C' : '#3B3B6D';
+  statusMessage.style.background = isError ? 'var(--danger-soft)' : 'var(--accent-soft)';
+  statusMessage.style.color = isError ? 'var(--danger)' : 'var(--accent)';
 }
 
 function clearStatus() {
@@ -46,8 +46,8 @@ function clearStatus() {
 
 function buildAppointmentCard(appointment, isUpcoming) {
   const card = document.createElement('div');
-  card.style.background = '#FFFFFF';
-  card.style.border = '1px solid #E7E5F1';
+  card.style.background = 'var(--surface)';
+  card.style.border = '1px solid var(--border)';
   card.style.borderRadius = '12px';
   card.style.padding = '18px 20px';
   card.style.display = 'flex';
@@ -62,12 +62,12 @@ function buildAppointmentCard(appointment, isUpcoming) {
   const title = document.createElement('div');
   title.style.fontSize = '15px';
   title.style.fontWeight = '700';
-  title.style.color = '#1E1B2E';
+  title.style.color = 'var(--text-primary)';
   title.textContent = getDoctorName(appointment.doctor_id);
 
   const subtitle = document.createElement('div');
   subtitle.style.fontSize = '13px';
-  subtitle.style.color = '#6B6880';
+  subtitle.style.color = 'var(--text-secondary)';
   const statusText = appointment.status ? ` • ${appointment.status}` : '';
   subtitle.textContent = `${appointment.specialty || 'Primary care'} • ${appointment.location || 'Office visit'}${statusText}`;
 
@@ -85,11 +85,11 @@ function buildAppointmentCard(appointment, isUpcoming) {
   const dateEl = document.createElement('div');
   dateEl.style.fontSize = '14px';
   dateEl.style.fontWeight = '700';
-  dateEl.style.color = '#1E1B2E';
+  dateEl.style.color = 'var(--text-primary)';
   dateEl.textContent = date;
   const timeEl = document.createElement('div');
   timeEl.style.fontSize = '13px';
-  timeEl.style.color = '#6B6880';
+  timeEl.style.color = 'var(--text-secondary)';
   timeEl.textContent = time;
   dateBlock.appendChild(dateEl);
   dateBlock.appendChild(timeEl);
@@ -98,8 +98,8 @@ function buildAppointmentCard(appointment, isUpcoming) {
 
   if (isUpcoming && appointment.status === 'scheduled') {
     const button = document.createElement('button');
-    button.style.background = '#FDECEA';
-    button.style.color = '#E0524A';
+    button.style.background = 'var(--danger-soft)';
+    button.style.color = 'var(--danger)';
     button.style.border = 'none';
     button.style.fontFamily = "'Inter',sans-serif";
     button.style.fontSize = '13px';
@@ -172,9 +172,9 @@ async function fetchSlotsForDoctor(doctorId) {
       const btn = document.createElement('button');
       btn.textContent = (new Date(s.replace(' ', 'T'))).toLocaleString();
       btn.style.padding = '8px 12px';
-      btn.style.border = '1px solid #E7E5F1';
+      btn.style.border = '1px solid var(--border)';
       btn.style.borderRadius = '8px';
-      btn.style.background = '#FFFFFF';
+      btn.style.background = 'var(--surface)';
       btn.style.cursor = 'pointer';
       btn.addEventListener('click', () => {
         selectedSlot = s;
@@ -261,8 +261,8 @@ function renderAppointments(appointments) {
   upcomingList.innerHTML = '';
   pastList.innerHTML = '';
   if (!Array.isArray(appointments) || appointments.length === 0) {
-    upcomingList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:#FFFFFF;border:1px solid #E7E5F1;color:#6B6880;font-size:14px">No appointments found.</div>`;
-    pastList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:#FFFFFF;border:1px solid #E7E5F1;color:#6B6880;font-size:14px">No past visits yet.</div>`;
+    upcomingList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:14px">No appointments found.</div>`;
+    pastList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:14px">No past visits yet.</div>`;
     return;
   }
 
@@ -272,13 +272,13 @@ function renderAppointments(appointments) {
   const past = sorted.filter((apt) => new Date(apt.slot) < now || apt.status === 'completed' || apt.status === 'cancelled');
 
   if (upcoming.length === 0) {
-    upcomingList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:#FFFFFF;border:1px solid #E7E5F1;color:#6B6880;font-size:14px">No upcoming appointments.</div>`;
+    upcomingList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:14px">No upcoming appointments.</div>`;
   } else {
     upcoming.forEach((apt) => upcomingList.appendChild(buildAppointmentCard(apt, true)));
   }
 
   if (past.length === 0) {
-    pastList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:#FFFFFF;border:1px solid #E7E5F1;color:#6B6880;font-size:14px">No past appointments.</div>`;
+    pastList.innerHTML = `<div style="padding:24px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:14px">No past appointments.</div>`;
   } else {
     past.forEach((apt) => pastList.appendChild(buildAppointmentCard(apt, false)));
   }

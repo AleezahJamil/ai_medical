@@ -8,7 +8,7 @@ const doctorLogout = document.getElementById('doctorLogout');
 function showSlotStatus(message, isError = false) {
   slotStatus.textContent = message;
   slotStatus.style.display = 'block';
-  slotStatus.style.color = isError ? '#A93C3C' : '#3B3B6D';
+  slotStatus.style.color = isError ? 'var(--danger)' : 'var(--accent)';
 }
 
 function clearSlotStatus() {
@@ -25,7 +25,7 @@ function formatSlotLabel(slot) {
 function renderAvailableSlots(slots) {
   availableSlotsContainer.innerHTML = '';
   if (!slots || slots.length === 0) {
-    availableSlotsContainer.innerHTML = '<div style="padding:18px;border-radius:12px;background:#F7F7FB;color:#6B6880">No available slots added yet.</div>';
+    availableSlotsContainer.innerHTML = '<div style="padding:18px;border-radius:12px;background:var(--page-bg);color:var(--text-secondary)">No available slots added yet.</div>';
     return;
   }
   slots.forEach((slot) => {
@@ -34,11 +34,11 @@ function renderAvailableSlots(slots) {
     slotRow.style.alignItems = 'center';
     slotRow.style.justifyContent = 'space-between';
     slotRow.style.padding = '14px 16px';
-    slotRow.style.border = '1px solid #E7E5F1';
+    slotRow.style.border = '1px solid var(--border)';
     slotRow.style.borderRadius = '12px';
-    slotRow.style.background = '#FFFFFF';
+    slotRow.style.background = 'var(--surface)';
     slotRow.style.fontSize = '14px';
-    slotRow.style.color = '#1E1B2E';
+    slotRow.style.color = 'var(--text-primary)';
 
     const label = document.createElement('div');
     label.textContent = formatSlotLabel(slot);

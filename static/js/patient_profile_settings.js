@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function showStatus(message, isError) {
     statusMessage.textContent = message;
     statusMessage.style.display = 'block';
-    statusMessage.style.background = isError ? '#FDECEA' : '#F5F5FF';
-    statusMessage.style.color = isError ? '#A93C3C' : '#3B3B6D';
+    statusMessage.style.background = isError ? 'var(--danger-soft)' : 'var(--accent-soft)';
+    statusMessage.style.color = isError ? 'var(--danger)' : 'var(--accent)';
     if (!isError) {
       setTimeout(() => { statusMessage.style.display = 'none'; }, 3000);
     }

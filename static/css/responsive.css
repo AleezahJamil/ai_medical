@@ -1,0 +1,157 @@
+/* Shared responsive layer for CareFlow AI.
+   Desktop appearance is untouched above 900px; everything below
+   is additive (hamburger nav, off-canvas sidebar, single-column
+   stacking, scrollable tables/calendars, no-zoom form inputs). */
+
+html, body {
+  overflow-x: hidden;
+}
+
+.cf-hamburger {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 45;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #E7E5F1);
+  background: var(--surface, #FFFFFF);
+  box-shadow: 0 4px 12px rgba(30,27,46,0.12);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cf-hamburger span,
+.cf-hamburger span::before,
+.cf-hamburger span::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary, #1E1B2E);
+  border-radius: 2px;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.cf-hamburger span::before { top: -6px; position: absolute; }
+.cf-hamburger span::after { top: 6px; position: absolute; }
+
+.cf-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(16,16,24,0.5);
+  z-index: 35;
+}
+
+.cf-sidebar-backdrop.cf-open {
+  display: block;
+}
+
+/* Tables and calendars scroll horizontally instead of squeezing content */
+.cf-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cf-calendar-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cf-tabs-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.cf-tabs-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.cf-tabs-scroll > a,
+.cf-tabs-scroll > button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .cf-hamburger {
+    display: flex;
+  }
+
+  .cf-sidebar-backdrop {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .cf-sidebar-backdrop.cf-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cf-sidebar {
+    transform: translateX(-100%) !important;
+    transition: transform 0.25s ease !important;
+    z-index: 40 !important;
+    box-shadow: 0 0 0 rgba(0,0,0,0) !important;
+  }
+
+  .cf-sidebar.cf-open {
+    transform: translateX(0) !important;
+    box-shadow: 8px 0 24px rgba(30,27,46,0.18) !important;
+  }
+
+  .cf-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 24px 16px 32px !important;
+  }
+
+  .cf-grid-2,
+  .cf-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cf-modal-panel {
+    width: calc(100% - 32px) !important;
+    max-width: 480px !important;
+    margin: 16px !important;
+  }
+
+  .cf-tabs-scroll {
+    flex-wrap: nowrap !important;
+  }
+
+  .cf-table-wrap table {
+    min-width: 560px;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  button, input[type="submit"] {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cf-content {
+    padding: 20px 12px 28px !important;
+  }
+
+  .cf-calendar-wrap > div {
+    min-width: 520px;
+  }
+}

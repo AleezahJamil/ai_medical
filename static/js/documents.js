@@ -13,14 +13,14 @@ function setStatus(message, visible = true) {
 function renderDocuments(documents) {
   documentsList.innerHTML = "";
   if (!documents || documents.length === 0) {
-    documentsList.innerHTML = `<div style=\"padding:24px 18px;border-radius:16px;background:#FFFFFF;border:1px solid #E7E5F1;color:#6B6880;font-size:14px;\">No documents uploaded yet. Upload a report to see a summary here.</div>`;
+    documentsList.innerHTML = `<div style=\"padding:24px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);color:var(--text-secondary);font-size:14px;\">No documents uploaded yet. Upload a report to see a summary here.</div>`;
     return;
   }
 
   documents.forEach((doc) => {
     const card = document.createElement("div");
-    card.style.background = "#FFFFFF";
-    card.style.border = "1px solid #E7E5F1";
+    card.style.background = "var(--surface)";
+    card.style.border = "1px solid var(--border)";
     card.style.borderRadius = "20px";
     card.style.padding = "22px";
     card.style.display = "flex";
@@ -30,12 +30,12 @@ function renderDocuments(documents) {
     const title = document.createElement("div");
     title.style.fontSize = "16px";
     title.style.fontWeight = "800";
-    title.style.color = "#1E1B2E";
+    title.style.color = "var(--text-primary)";
     title.textContent = doc.filename || "Uploaded document";
 
     const summary = document.createElement("div");
     summary.style.fontSize = "14px";
-    summary.style.color = "#5A5A6A";
+    summary.style.color = "var(--text-secondary)";
     summary.textContent = doc.summary || "No summary available.";
 
     const meta = document.createElement("div");
@@ -47,19 +47,19 @@ function renderDocuments(documents) {
     const typeTag = document.createElement("span");
     typeTag.style.fontSize = "12px";
     typeTag.style.fontWeight = "700";
-    typeTag.style.color = "#6D5BD0";
+    typeTag.style.color = "var(--accent)";
     typeTag.style.textTransform = "uppercase";
     typeTag.textContent = doc.filename?.split(".").pop()?.toUpperCase() || "FILE";
 
     const dateTag = document.createElement("span");
     dateTag.style.fontSize = "12px";
-    dateTag.style.color = "#8C8A9F";
+    dateTag.style.color = "var(--text-secondary)";
     dateTag.textContent = doc.uploaded_at || doc.uploadedAt || "Upload date unavailable";
 
     const statusTag = document.createElement("span");
     statusTag.style.fontSize = "12px";
     statusTag.style.fontWeight = "700";
-    statusTag.style.color = doc.summary ? "#2E7D5B" : "#8C8A9F";
+    statusTag.style.color = doc.summary ? "var(--success)" : "var(--text-secondary)";
     statusTag.textContent = doc.summary ? "Analyzed" : "Pending";
 
     meta.appendChild(typeTag);
@@ -81,7 +81,7 @@ async function fetchDocuments() {
     const data = await response.json();
     renderDocuments(data);
   } catch (err) {
-    documentsList.innerHTML = `<div style=\"padding:24px 18px;border-radius:16px;background:#FFF1F0;border:1px solid #F2C6C1;color:#A93C3C;font-size:14px;\">${err.message}</div>`;
+    documentsList.innerHTML = `<div style=\"padding:24px 18px;border-radius:16px;background:var(--danger-soft);border:1px solid var(--danger);color:var(--danger);font-size:14px;\">${err.message}</div>`;
   }
 }
 
@@ -120,14 +120,14 @@ fileInput.addEventListener("change", (event) => {
 
 uploadArea.addEventListener("dragover", (event) => {
   event.preventDefault();
-  uploadArea.style.background = "#F5F4FF";
+  uploadArea.style.background = "var(--accent-soft)";
 });
 uploadArea.addEventListener("dragleave", () => {
-  uploadArea.style.background = "#FFFFFF";
+  uploadArea.style.background = "var(--surface)";
 });
 uploadArea.addEventListener("drop", (event) => {
   event.preventDefault();
-  uploadArea.style.background = "#FFFFFF";
+  uploadArea.style.background = "var(--surface)";
   if (event.dataTransfer.files.length > 0) {
     uploadFile(event.dataTransfer.files[0]);
   }

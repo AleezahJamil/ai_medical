@@ -3,47 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>(function(){try{if(localStorage.getItem('careflow-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <script src="{{ url_for('static', filename='js/responsive_nav.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
   <style>
-    body { margin: 0; background: #F7F7FB; }
-    a { color: #6D5BD0; text-decoration: none; }
-    a:hover { color: #5A48BD; }
+    body { margin: 0; }
+    a { text-decoration: none; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 14px 12px; text-align: left; }
-    th { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #6B6880; }
-    td { font-size: 14px; color: #1E1B2E; border-top: 1px solid #E7E5F1; }
+    th { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-secondary); }
+    td { font-size: 14px; color: var(--text-primary); border-top: 1px solid var(--border); }
     tr:first-child td { border-top: none; }
     .row-action a { font-weight: 700; }
   </style>
 </head>
 <body>
-<div style="font-family:'Inter',sans-serif;min-height:100vh;background:#F7F7FB">
-  <div style="position:fixed;top:0;left:0;width:240px;height:100vh;background:#FFFFFF;border-right:1px solid #E7E5F1;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
+<div style="font-family:'Inter',sans-serif;min-height:100vh;background:var(--page-bg)">
+  <button type="button" class="cf-hamburger" aria-label="Open menu"><span></span></button>
+  <div class="cf-sidebar-backdrop"></div>
+  <div class="cf-sidebar" style="position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;z-index:10">
     <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
-      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
       <div style="display:flex;flex-direction:column;line-height:1.1">
-        <span style="font-weight:800;font-size:16px;color:#1E1B2E">CareFlow</span>
-        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">Clinician</span>
+        <span style="font-weight:800;font-size:16px;color:var(--text-primary)">CareFlow</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase">Clinician</span>
       </div>
     </div>
     <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
-      <a href="/doctor/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Dashboard</a>
-      <a href="/doctor/patients" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:#EFECFB;color:#6D5BD0">Patients</a>
-      <a href="/doctor/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Appointments</a>
-      <a href="/doctor/audit" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Audit Trail</a>
+      <a href="/doctor/dashboard" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--text-secondary)">Dashboard</a>
+      <a href="/doctor/patients" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;background:var(--accent-soft);color:var(--accent)">Patients</a>
+      <a href="/doctor/appointments" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--text-secondary)">Appointments</a>
+      <a href="/doctor/audit" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--text-secondary)">Audit Trail</a>
     </nav>
-    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E7E5F1;padding-top:12px">
-      <a href="/doctor/profile" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Profile</a>
-      <a href="/doctor/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#6B6880">Settings</a>
-      <a href="/login" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#E0524A">Log out</a>
+    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);padding-top:12px">
+      <a href="/doctor/profile" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--text-secondary)">Profile</a>
+      <a href="/doctor/settings" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--text-secondary)">Settings</a>
+      <a href="/login" style="display:flex;align-items:center;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--danger)">Log out</a>
     </div>
   </div>
 
-  <div style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:1040px">
-    <div style="font-size:26px;font-weight:800;color:#1E1B2E;margin-bottom:4px">Patients</div>
-    <div style="font-size:14px;color:#6B6880;margin-bottom:32px">All patients currently assigned to you.</div>
+  <div class="cf-content" style="margin-left:240px;padding:40px;box-sizing:border-box;max-width:1040px">
+    <div style="font-size:26px;font-weight:800;color:var(--text-primary);margin-bottom:4px">Patients</div>
+    <div style="font-size:14px;color:var(--text-secondary);margin-bottom:32px">All patients currently assigned to you.</div>
 
-    <div style="background:#FFFFFF;border:1px solid #E7E5F1;border-radius:18px;overflow:hidden">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden">
+      <div class="cf-table-wrap">
       <table>
         <thead>
           <tr>
@@ -64,14 +71,15 @@
           {% endfor %}
           {% if patients|length == 0 %}
             <tr>
-              <td colspan="4" style="padding:24px;text-align:center;color:#6B6880">No patients assigned to you yet.</td>
+              <td colspan="4" style="padding:24px;text-align:center;color:var(--text-secondary)">No patients assigned to you yet.</td>
             </tr>
           {% endif %}
         </tbody>
       </table>
+      </div>
     </div>
 
-    <div style="margin-top:32px;padding-top:16px;border-top:1px solid #E7E5F1;font-size:12px;color:#6B6880"></div>
+    <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary)"></div>
   </div>
 </div>
 </body>

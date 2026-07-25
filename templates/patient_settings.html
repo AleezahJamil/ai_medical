@@ -3,51 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>(function(){try{if(localStorage.getItem('careflow-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();</script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="{{ url_for('static', filename='js/patient_settings.js') }}" defer></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <script src="{{ url_for('static', filename='js/responsive_nav.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
   <style>
-    :root {
-      color-scheme: light;
-      --page-bg: #F7F7FB;
-      --surface: #FFFFFF;
-      --surface-alt: #FAFAFD;
-      --border: #E7E5F1;
-      --text-primary: #1E1B2E;
-      --text-secondary: #6B6880;
-      --accent: #6D5BD0;
-      --accent-soft: #EFECFB;
-      --danger: #E0524A;
-      --shadow: 0 1px 2px rgba(30,27,46,0.04), 0 8px 24px rgba(30,27,46,0.06);
-    }
-
+    /* Theme variables (--page-bg, --surface, --accent, etc.) now come from
+       the shared static/css/theme.css, which defines the same tokens at
+       :root / :root[data-theme="dark"] so every page can use them. */
     body {
       margin: 0;
-      background: var(--page-bg);
-      color: var(--text-primary);
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    body[data-theme="dark"] {
-      color-scheme: dark;
-      --page-bg: #0F1118;
-      --surface: #171B27;
-      --surface-alt: #1F2432;
-      --border: #2F3546;
-      --text-primary: #F7F7FB;
-      --text-secondary: #B6BED5;
-      --accent: #8B7CF5;
-      --accent-soft: #221D46;
-      --danger: #FF8D82;
-      --shadow: 0 12px 30px rgba(0,0,0,0.35);
     }
 
     a {
-      color: var(--accent);
       text-decoration: none;
     }
 
     a:hover {
-      color: var(--accent);
       opacity: 0.9;
     }
 
@@ -233,12 +208,14 @@
 </head>
 <body>
 <div class="app-shell">
-  <div class="sidebar">
+  <button type="button" class="cf-hamburger" aria-label="Open menu"><span></span></button>
+  <div class="cf-sidebar-backdrop"></div>
+  <div class="sidebar cf-sidebar">
     <div style="display:flex;align-items:center;gap:8px;padding:0 8px 24px 8px">
-      <div style="width:32px;height:32px;border-radius:8px;background:#6D5BD0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px">CF</div>
       <div style="display:flex;flex-direction:column;line-height:1.1">
         <span style="font-weight:800;font-size:16px;color:var(--text-primary)">CareFlow</span>
-        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:#6D5BD0;text-transform:uppercase">AI</span>
+        <span style="font-weight:600;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase">AI</span>
       </div>
     </div>
     <nav style="display:flex;flex-direction:column;gap:2px;flex:1">
@@ -257,10 +234,10 @@
     </div>
   </div>
 
-  <div class="content-shell">
+  <div class="content-shell cf-content">
     <div class="page-title">Settings</div>
 
-    <div class="tab-row">
+    <div class="tab-row cf-tabs-scroll">
       <button type="button" class="settings-tab" data-tab="account" style="color:var(--accent);border-bottom:2px solid var(--accent)">Account</button>
       <button type="button" class="settings-tab" data-tab="privacy">Privacy</button>
       <button type="button" class="settings-tab" data-tab="security">Security</button>

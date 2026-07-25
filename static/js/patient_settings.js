@@ -24,16 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function applyTheme(theme) {
-    const resolvedTheme = theme === 'dark' ? 'dark' : 'light';
-    document.body.setAttribute('data-theme', resolvedTheme);
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
-    if (themeToggle) {
-      themeToggle.checked = resolvedTheme === 'dark';
-    }
-    localStorage.setItem('careflow-theme', resolvedTheme);
-  }
-
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => setTab(tab.dataset.tab));
   });
@@ -72,20 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (themeToggle) {
-    themeToggle.addEventListener('change', (event) => {
-      applyTheme(event.target.checked ? 'dark' : 'light');
-    });
+  if (themeToggle && window.CFTheme) {
+    window.CFTheme.initToggle(themeToggle);
   }
 
   function showPasswordStatus(message, isError) {
     passwordStatus.textContent = message;
     passwordStatus.style.display = 'block';
-    passwordStatus.style.color = isError ? '#A93C3C' : 'var(--text-primary)';
+    passwordStatus.style.color = isError ? 'var(--danger)' : 'var(--text-primary)';
     setTimeout(() => { passwordStatus.style.display = 'none'; }, 3000);
   }
 
-  const savedTheme = localStorage.getItem('careflow-theme') || 'light';
-  applyTheme(savedTheme);
   setTab('account');
 });

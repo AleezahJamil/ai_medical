@@ -34,7 +34,7 @@ const updateDots = () => {
     dot.style.height = '4px';
     dot.style.flex = '1';
     dot.style.borderRadius = '2px';
-    dot.style.background = i <= state.step ? '#6D5BD0' : '#E7E5F1';
+    dot.style.background = i <= state.step ? 'var(--accent)' : 'var(--border)';
     stepDots.appendChild(dot);
   }
   const labels = ['Symptoms', 'History', 'Severity', 'Lifestyle', 'Review', 'Complete'];
@@ -53,8 +53,8 @@ const renderMessages = () => {
     bubble.style.borderRadius = '14px';
     bubble.style.fontSize = '14px';
     bubble.style.lineHeight = '1.5';
-    bubble.style.background = msg.from === 'patient' ? '#6D5BD0' : '#F7F7FB';
-    bubble.style.color = msg.from === 'patient' ? '#fff' : '#1E1B2E';
+    bubble.style.background = msg.from === 'patient' ? 'var(--accent)' : 'var(--page-bg)';
+    bubble.style.color = msg.from === 'patient' ? '#fff' : 'var(--text-primary)';
     bubble.textContent = msg.text;
     wrapper.appendChild(bubble);
     messageContainer.appendChild(wrapper);

@@ -1,0 +1,81 @@
+/* Shared CareFlow AI theme system.
+   Light values match the app's existing palette exactly (zero visual
+   change when data-theme is absent/"light"). Dark values are the same
+   palette patient_settings.html already shipped, extended with a few
+   extra tokens (accent-hover, success, danger-soft, success-soft) so
+   every page can theme cards, tables, chat bubbles and status pills
+   from one place instead of redefining variables per template. */
+
+:root {
+  color-scheme: light;
+  --page-bg: #F7F7FB;
+  --surface: #FFFFFF;
+  --surface-alt: #FAFAFD;
+  --border: #E7E5F1;
+  --text-primary: #1E1B2E;
+  --text-secondary: #6B6880;
+  --accent: #6D5BD0;
+  --accent-hover: #5A48BD;
+  --accent-soft: #EFECFB;
+  --danger: #E0524A;
+  --danger-soft: #FBEAE7;
+  --success: #2E7D5B;
+  --success-soft: #E7F5EE;
+  --shadow: 0 1px 2px rgba(30,27,46,0.04), 0 8px 24px rgba(30,27,46,0.06);
+  --overlay: rgba(16,16,24,0.5);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #0F1118;
+  --surface: #171B27;
+  --surface-alt: #1F2432;
+  --border: #2F3546;
+  --text-primary: #F7F7FB;
+  --text-secondary: #B6BED5;
+  --accent: #8B7CF5;
+  --accent-hover: #A594F9;
+  --accent-soft: #221D46;
+  --danger: #FF8D82;
+  --danger-soft: #3A2230;
+  --success: #34D399;
+  --success-soft: #123528;
+  --shadow: 0 12px 30px rgba(0,0,0,0.35);
+  --overlay: rgba(0,0,0,0.6);
+}
+
+html, body {
+  background: var(--page-bg);
+}
+
+body {
+  color: var(--text-primary);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+input, select, textarea {
+  color-scheme: inherit;
+}
+
+/* Safety net for the sidebar/modal shells: their background still comes
+   from an inline style attribute on most pages, which normally beats any
+   stylesheet rule. These !important overrides make sure the shell still
+   themes correctly on any page where the inline color hasn't been swapped
+   for var(--surface) yet. Harmless once a page's inline value already is
+   var(--surface) — same computed color either way. */
+.cf-sidebar {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+.cf-modal-panel {
+  background: var(--surface) !important;
+}

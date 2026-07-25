@@ -47,10 +47,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   symptomsList.innerHTML = '';
   if (symptoms.length === 0) {
     symptomsList.innerHTML = `
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #E7E5F1">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
         <div>
-          <div style="font-size:14px;font-weight:700;color:#1E1B2E">No symptom details yet</div>
-          <div style="font-size:13px;color:#6B6880;margin-top:2px">Complete intake to populate symptom details.</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text-primary)">No symptom details yet</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">Complete intake to populate symptom details.</div>
         </div>
       </div>
     `;
@@ -72,17 +72,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.style.justifyContent = 'space-between';
       row.style.gap = '12px';
       row.style.paddingBottom = '12px';
-      row.style.borderBottom = '1px solid #E7E5F1';
+      row.style.borderBottom = '1px solid var(--border)';
 
       const textBlock = document.createElement('div');
       const title = document.createElement('div');
       title.style.fontSize = '14px';
       title.style.fontWeight = '700';
-      title.style.color = '#1E1B2E';
+      title.style.color = 'var(--text-primary)';
       title.textContent = label;
       const detailEl = document.createElement('div');
       detailEl.style.fontSize = '13px';
-      detailEl.style.color = '#6B6880';
+      detailEl.style.color = 'var(--text-secondary)';
       detailEl.style.marginTop = '2px';
       detailEl.textContent = detail;
       textBlock.appendChild(title);
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (flagged) {
         const flag = document.createElement('span');
-        flag.style.background = '#FDECEA';
-        flag.style.color = '#E0524A';
+        flag.style.background = 'var(--danger-soft)';
+        flag.style.color = 'var(--danger)';
         flag.style.fontSize = '11px';
         flag.style.fontWeight = '700';
         flag.style.padding = '4px 10px';
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   planList.innerHTML = '';
   if (plan.length === 0) {
-    planList.innerHTML = '<div style="font-size:14px;color:#6B6880">No AI plan available yet.</div>';
+    planList.innerHTML = '<div style="font-size:14px;color:var(--text-secondary)">No AI plan available yet.</div>';
   } else {
     plan.forEach((item) => {
       const row = document.createElement('div');
@@ -117,14 +117,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       row.style.alignItems = 'flex-start';
       row.style.marginBottom = '10px';
       row.style.fontSize = '14px';
-      row.style.color = '#1E1B2E';
+      row.style.color = 'var(--text-primary)';
       row.style.lineHeight = '1.5';
 
       const bullet = document.createElement('span');
       bullet.style.width = '6px';
       bullet.style.height = '6px';
       bullet.style.borderRadius = '50%';
-      bullet.style.background = '#6D5BD0';
+      bullet.style.background = 'var(--accent)';
       bullet.style.marginTop = '8px';
       bullet.style.flexShrink = '0';
 
