@@ -2,3 +2,5 @@
 .env
 __pycache__/
 *.pyc
+storage/app.db
+uploaded_documents/
