@@ -20,7 +20,7 @@ The application provides:
 - ✅ Doctor approval workflow
 - 📅 Booking functionality
 - 📧 Email functionality
-- 📱 Responsive user interface
+- 📱 Responsive design for mobile and desktop
 
 ---
 
@@ -61,6 +61,9 @@ New doctor accounts are reviewed and approved by an administrator before access 
 
 The platform includes functionality for managing doctor/patient booking workflows.
 
+### 📱 Responsive Design
+
+The application provides a responsive user interface optimized for both desktop and mobile devices.
 ---
 
 ## 🛠️ Technology Stack
