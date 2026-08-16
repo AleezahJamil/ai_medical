@@ -44,11 +44,18 @@ Doctors have access to dedicated functionality for managing patient-related info
 
 ### 🔐 Authentication & Access Control
 
-The application includes authentication and role-based access functionality for different types of users.
+CareFlow includes secure authentication and role-based access control for patients, doctors, and administrators.
 
-### ✅ Doctor Approval
+The authentication system includes:
+- User registration and login
+- Email verification
+- Role-based access control
+- Doctor approval workflow
+- Protected application routes
 
-Doctor accounts include an approval workflow before access to relevant functionality is granted.
+### ✅ Administrator doctor approval workflow
+
+New doctor accounts are reviewed and approved by an administrator before access to the doctor dashboard and related functionality is granted.
 
 ### 📅 Booking
 
@@ -99,6 +106,7 @@ CareFlow is organized into modular components, allowing different areas of the a
                        │
                        ▼
                 Document Processing
+```
 
 
 ## 📂 Project Structure
@@ -123,28 +131,30 @@ ai_medical/
 ├── create_admin.py
 ├── requirements.txt
 └── test_*.py
+```
+
 ## 📸 Screenshots
 
 ### Patient Landing Page
 
-![Patient Landing Page](screenshots/Landing%20Page%20for%20patient)
+![Patient Landing Page](screenshots/Landing-Page-for-patient.png)
 
 ### AI-Powered Patient Intake
 
-![AI Intake](screenshots/AI%20Intake)
+![AI Intake](screenshots/AI-Intake.png)
 
-### Medical Document Upload
+### Medical Document Processing
 
-![Medical Documents](screenshots/Documents)
+![Medical Documents](screenshots/Documents.png)
 
 ### Patient Clinical Summary
 
-![Clinical Summary](screenshots/Clinical%20Summary%20of%20Patient)
+![Clinical Summary](screenshots/Clinical-Summary-of-Patient.png)
 
 ### Doctor Patient Overview
 
-![Doctor Patient Overview](screenshots/Patient%20overview%20page%20of%20Doctor)
+![Doctor Patient Overview](screenshots/Patient-overview-page-of-Doctor.png)
 
 ### Clinical Notes
 
-![Clinical Notes](screenshots/Clinical%20Notes)
+![Clinical Notes](screenshots/Clinical-Notes.png)
