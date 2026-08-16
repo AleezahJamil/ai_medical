@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 storage/app.db
 uploaded_documents/
+*.log
