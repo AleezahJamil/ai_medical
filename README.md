@@ -123,3 +123,28 @@ ai_medical/
 ├── create_admin.py
 ├── requirements.txt
 └── test_*.py
+## 📸 Screenshots
+
+### Patient Landing Page
+
+![Patient Landing Page](screenshots/Landing%20Page%20for%20patient)
+
+### AI-Powered Patient Intake
+
+![AI Intake](screenshots/AI%20Intake)
+
+### Medical Document Upload
+
+![Medical Documents](screenshots/Documents)
+
+### Patient Clinical Summary
+
+![Clinical Summary](screenshots/Clinical%20Summary%20of%20Patient)
+
+### Doctor Patient Overview
+
+![Doctor Patient Overview](screenshots/Patient%20overview%20page%20of%20Doctor)
+
+### Clinical Notes
+
+![Clinical Notes](screenshots/Clinical%20Notes)
